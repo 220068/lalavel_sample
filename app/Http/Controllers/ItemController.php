@@ -74,24 +74,44 @@ class ItemController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(int $id)
     {
-        //
+        //商品IDから商品データを取得
+        // SELECT * FROM items WHERE id = xx;
+        $item = Item::find($id);
+        $data['item'] = $item;
+        //編集画面を表示
+        return view('item.edit', $data);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, int $id)
     {
-        //
+        $data = $request->all();
+        // dd($data);
+        // UPDATE items SET price = xxx WHERE id = xx;
+        // 1.
+        // unset($data['_token']);
+        // Item::where('id', $id)->update($data);
+        // 2.
+        // SELECT * FROM items WHERE id = xx;
+        // UPDATE items SET price = xxx WHERE id = xx;
+        Item::find($id)->fill($data)->save();
+
+        //リダイレクト
+        return redirect(route('item.edit', $id));
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(int $id)
     {
-        //
+        // DELETE FROM items WHERE id = xx;
+        Item::destroy($id);
+        // 一覧画面にリダイレクト
+        return redirect(route('item.index'));
     }
 }
